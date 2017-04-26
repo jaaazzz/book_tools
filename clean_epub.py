@@ -23,7 +23,23 @@ mark = '本书由“行行”整理，如果你不知道读什么书或者想获
 mymark = '111111111111111111111'
 new_temp_file = '/var/www/python/book_tools/new.html'
 log_name = 'clean_epub.log'
-def un_zip(file_name):  
+
+def zip_dir(dirname,zipfilename):
+    filelist = []
+    if os.path.isfile(dirname):
+        filelist.append(dirname)
+    else :
+        for root, dirs, files in os.walk(dirname):
+            for name in files:
+                filelist.append(os.path.join(root, name))
+         
+    zf = zipfile.ZipFile(zipfilename, "w", zipfile.zlib.DEFLATED)
+    for tar in filelist:
+        arcname = tar[len(dirname):]
+        #print arcname
+        zf.write(tar,arcname)
+    zf.close()
+def clean_epub(file_name):  
    # """unzip zip file"""  
     zip_file = zipfile.ZipFile(file_name)  
     if os.path.isdir(file_name + "_files"):  
@@ -34,6 +50,7 @@ def un_zip(file_name):
         zip_file.extract(names,file_name + "_files/")  
     zip_file.close()  
     search_html(file_name+'_files/')
+    zip_dir(file_name+'_files',file_name+'_files.epub')
 
 def search_html(rootdir):
 	for parent,dirnames,filenames in os.walk(rootdir):    #三个参数：分别返回1.父目录 2.所有文件夹名字（不含路径） 3.所有文件名字
@@ -44,21 +61,22 @@ def search_html(rootdir):
 def clean_html(filename,rootdir):
     all_the_text = open(rootdir+filename).read()
     if((all_the_text.find('www.ireadweek.com')!=-1) and (all_the_text.find('25岁前一定要读的25本书')!=-1)):
-    	fo = open(rootdir+filename, "rw+")
+    	fo = open(rootdir+filename, "w+")
     	new_txt = open(new_temp_file).read()
     	fo.write(new_txt)
     	fo.close()
-    	log(log_name,filename,'replace_file')
+    	log(log_name,rootdir+filename,'replace_file')
     elif ((all_the_text.find('www.ireadweek.com')!=-1) and (all_the_text.find('25岁前一定要读的25本书')==-1)):
-    	new_txt = all_the_text.replace(mark,mymark)
-    	fo = open(rootdir+filename, "rw+")
-	fo.write(new_txt)
-	fo.close() 
-	log(log_name,filename,'replace_str')
+            new_txt = all_the_text.replace(mark,mymark)
+            print new_txt
+            fo = open(rootdir+filename, "w+")
+            fo.write(new_txt)
+            fo.close() 
+            log(log_name,rootdir+filename,'replace_str')
     else:	
     	pass
 
 def log(log_name,filename,str1):
     fb = open(log_name,"a+")
     fb.write(filename+'||'+str(str1)+'\n')
-un_zip('/var/www/python/test/1368个单词就够了-王乐平.epub')
+clean_epub('/var/www/python/test/1368个单词就够了-王乐平.epub')
