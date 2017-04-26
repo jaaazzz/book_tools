@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding:utf-8
 import zipfile  
 import os
@@ -10,7 +9,7 @@ sys.setdefaultencoding('GBK')
 
 mark = '本书由“行行”整理，如果你不知道读什么书或者想获得更多免费电子书请加小编微信或QQ：491256034  小编也和结交一些喜欢读书的朋友  或者关注小编个人微信公众号id：d716-716  为了方便书友朋友找书和看书，小编自己做了一个电子书下载网站，网址：www.ireadweek.com  QQ群：550338315'
 mymark = '本书由“极刻”整理，书籍下载可登录网站：极刻分享“www.jikeshare.com” 。网站海量书籍不断更新，提供优质的文学/工具/小说类资源。若链接失效或书籍查找可加小编微信:/QQ:1504227550 '
-new_temp_file = 'E:/python_work_space/book_tools/new.html'
+new_temp_file = 'E:/python_workspace/book_tools/new.html'
 log_name = 'clean_epub.log'
 book_rootdir = 'E:/xx_417/'
 after_clean_epub_dir = 'E:/epub/'
@@ -59,13 +58,16 @@ def clean_html(filename,rootdir):
         fo.close()
         log(log_name,rootdir+filename,'replace_file')
     elif ((all_the_text.find('www.ireadweek.com')!=-1) and (all_the_text.find('25岁前一定要读的25本书')==-1)):
-            all_ps = re.findall('<p class="(.*?)">(.*?)</p>',all_the_text,re.S)
+            all_ps = re.findall('<p(.*?)>(.*?)</p>',all_the_text,re.S)
+            new_txt = all_the_text
             for p in all_ps:
                 if len(p)>1:
-                    if p[1].find('www.ireadweek.com'):
+                    if(p[1].find('www.ireadweek.com')!=-1):
+                        global the_p
                         the_p = p[1]
-            new_txt = all_the_text.replace(the_p,mymark)
-            print new_txt
+                        new_txt = new_txt.replace(the_p,mymark)
+            if(new_txt.find('123456.jpeg')!=-1):
+                new_txt = new_txt.replace('123456.jpeg','')
             fo = open(rootdir+filename, "w+")
             fo.write(new_txt)
             fo.close() 
