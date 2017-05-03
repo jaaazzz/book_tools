@@ -7,23 +7,80 @@ import re
 import time
 import MySQLdb
 
-# 打开数据库连接
-db = MySQLdb.connect("localhost","testuser","test123","TESTDB" )
-# 使用cursor()方法获取操作游标 
-cursor = db.cursor()
-# 使用execute方法执行SQL语句
-cursor.execute("SELECT VERSION()")
-# 使用 fetchone() 方法获取一条数据库。
-data = cursor.fetchone()
+class db_helper_class:
 
-# 关闭数据库连接
-db.close()
-books_name = 'xxurl.txt'
-ouput_name_url_file= 'xx_name_url.txt'
-num_row =  2295         #从第ｎ行开始读,这一行还没抓
+    def __init__(self):
+        self.db = MySQLdb.connect('localhost','root','','books',charset="utf8")
+        self.cursor = self.db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
 
-def save(fh, contents): 
-    fh.write(contents) 
+    def __del__(self):
+        self.db.close()
+
+    #**********************************************************************
+    # 描  述： 数据库查询操作
+    #
+    # 参  数： sql, 查询语句
+    #
+    # 返回值： 返回一个元组，包含受影响的行数、及fetchall()迭代器
+    # 修  改：
+    #**********************************************************************
+    def exe_search(self, sql):
+        # 受影响的行数
+        line_cnt = self.cursor.execute(sql)
+        return (line_cnt, self.cursor.fetchall())
+
+    #**********************************************************************
+    # 描  述： 数据库insert插入操作
+    #
+    # 参  数： sql, 插入格式部分
+    # 参  数： vals, 插入值元组
+    #
+    # 返回值： 空
+    # 修  改：
+    #**********************************************************************
+    def exe_insert(self, sql, vals):
+        self.cursor.execute(sql)
+        self.db.commit()
+
+    #**********************************************************************
+    # 描  述： update操作
+    #
+    # 参  数： sql, 查询语句
+    #
+    # 返回值： 空
+    # 修  改： 
+    #**********************************************************************
+    def exe_update(self, sql, vals):
+        self.cursor.execute(sql, vals)
+        self.db.commit()
+
+    #**********************************************************************
+    # 描  述： 获取select count计数值
+    #
+    # 参  数： sql, sql语句
+    #
+    # 返回值： 计数值
+    # 修  改： 
+    #**********************************************************************
+    def get_count(self, sql):
+        ret_count = 0
+
+        try:
+            line_cnt = self.cursor.execute(sql)
+            if line_cnt >= 0:
+                ret_count = self.cursor.fetchall()[0].popitem()[1]
+        except:
+            pass
+
+        return ret_count
+
+    def get_cursor(self):
+        return self.cursor
+
+db_helper = db_helper_class()
+
+book_dir = ''
+format = 'txt|pdf|epub|mobi'
 
 def get_info_by_name(name):
     book_info = {}
@@ -51,7 +108,12 @@ def get_info_by_name(name):
     book_info['pub'] = book_info['pub'][0].replace("\n", "").strip()
     book_info['pl'] = re.findall('<span class="pl">(.*?)</span>',book_items[0] ,re.S)
     book_info['pl'] = book_info['pl'][0].replace("\n", "").strip()
-    print book_info
+    book_info['author'] = book_info['pub'].split('/')
+    if(len(book_info['author'])>1):
+        book_info['author'] = book_info['author'][0]
+    else:
+        book_info['author'] = ''
+    return book_info
 
 def get_introtag_by_url(url):
     tags = []
@@ -69,8 +131,8 @@ def get_introtag_by_url(url):
     for x in tags_info:
         tags.append(x[1])
     intro =intro[0][1]
-    print intro
-    print tags
+    tags = '|'.join(tags)
+    return (intro,tags)
 def get_comments_by_url(url):
     comments_arr = []
     headers = { 
@@ -85,12 +147,43 @@ def get_comments_by_url(url):
     comments = re.findall('<p class="comment-content">(.*?)</p>',resp.content,re.S)
     if  len(comments)>5:
         comments = comments[:5]
-    print comments
+    return '|'.join(comments)
 #get_info_by_name('谈话的力量')
-get_introtag_by_url('https://book.douban.com/subject/1183730/')
+#get_introtag_by_url('https://book.douban.com/subject/1183730/')
 #get_comments_by_url('https://book.douban.com/subject/1183730/comments')
 
-book_name = []
-book_mate_data = []
-for name in book_name:
-    
+list = os.listdir(book_dir) #列出文件夹下所有的目录与文件
+for i in range(0,len(list)):
+    path = os.path.join(rootdir,list[i])
+    if os.path.isdir(path):
+        book_info1 = get_info_by_name(list[i])
+        if(book_info1['url']):
+            book_info2 = get_introtag_by_url(book_info1['url'])
+            book_info3 = get_comments_by_url(book_info1['url'])
+            sql = "insert into formal_book_info (name,douban_name,format,author,tags,category,intro,comments,datetime) \
+                values (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            fld_inserttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+
+            vals = (
+                list[1],
+                book_info1['real_name'],
+                format,
+                book_info1['author'],
+                book_info2[1],
+                cate,
+                book_info2[0],
+                book_info3,
+                fld_inserttime
+            )
+            # 实时入库
+            self.db_oper.exe_insert(sql, vals)
+        else:
+            sql = "insert into formal_book_info (name,format,datetime) \
+                values (%s,%s,%s)"
+            fld_inserttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+            vals = (
+                list[1],
+                format,
+                fld_inserttime
+            )    
+            self.db_oper.exe_insert(sql, vals)
