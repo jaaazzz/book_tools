@@ -36,7 +36,6 @@ for res_tag in decode_res_tags:
     old_tags[res_tag['name']] = res_tag['id']
 print('已经存在的标签列表：')
 print(old_tags)
-
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0','Referer' : 'http:www.share345.com'}
 
 
