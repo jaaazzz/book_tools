@@ -6,6 +6,7 @@ import urllib2
 import re
 import socket
 import base64
+import json
 
 class Crawl_helper_tools_url:
 
@@ -98,18 +99,25 @@ class Crawl_helper_tools_url:
         except Exception , e:
             #print Exception,":",e
             #print('except open URL time out')
-            return 'fail'
+            return 'fail',e
 
         return response.read()
 
     @staticmethod
     def http_auth_handle_get_tag(url,data = {}):
         # data - dict
-        if (data):
-            data = urllib.urlencode(data)
-            url = url + '?' + data
+        old_tags = {}
         try:
-            response = urllib2.urlopen(url)
+            for page in range(1,20):   
+                url = url + '?' + 'per_page=100&page='+str(page)
+                response = urllib2.urlopen(url)
+                content =response.read()
+                if(len(content)<10):
+                    pass
+                else:
+                    decode_res_tags = json.loads(content)
+                    for res_tag in decode_res_tags:
+                        old_tags[res_tag['name']] = res_tag['id']
         except socket.timeout:
             # print('except time out')
             return 'fail'
@@ -117,7 +125,7 @@ class Crawl_helper_tools_url:
             # print Exception,":",e
             # print('except open URL time out')
             return 'fail'
-        return  response.read()
+        return  old_tags
 
     @staticmethod
     def http_auth_handle_create_tag(username, password, url, new_tag, headers = {}):
@@ -126,7 +134,7 @@ class Crawl_helper_tools_url:
         headers["Authorization"] = "Basic "+ auth
 
         # data - dict
-        print new_tag
+        #print new_tag
         print headers
         data = {"name":new_tag,
                 "slug":'122',
@@ -135,15 +143,15 @@ class Crawl_helper_tools_url:
         #req = urllib2.Request(url, data)
         req = urllib2.Request(url, data, headers)
         #response = urllib2.urlopen(req)
-        # try:
-        response = urllib2.urlopen(req,timeout=5)
-        # except socket.timeout:
-        #     #print('except time out')
-        #     return 'fail time'
-        # except Exception , e:
-        #     #print Exception,":",e
-        #     #print('except open URL time out')
-        #     return 'fail',e
+        try:
+            response = urllib2.urlopen(req,timeout=5)
+        except socket.timeout:
+            #print('except time out')
+            return 'fail time'
+        except Exception , e:
+            #print Exception,":",e
+            #print('except open URL time out')
+            return 'fail'
 
         return response.read()
 

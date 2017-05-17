@@ -183,6 +183,7 @@ while(i <= int(page)):
 
             # print('创建文章 参数')
             # print(wp_data)
+            print wp_data
             res = Crawl_helper_tools_url.http_auth(username,password,wp_url,wp_data,wp_headers)
             if (res == "fail"):
                 print("添加失败")
