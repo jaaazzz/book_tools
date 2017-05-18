@@ -5,10 +5,49 @@ import math
 import random,string
 import re
 import time
+import MySQLdb
+class db_helper_class:
 
-input_url_file= 'xxurl.txt'
+    def __init__(self):
+        self.db = MySQLdb.connect('localhost','root','','books',charset="utf8")
+        self.cursor = self.db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+
+    def __del__(self):
+        self.db.close()
+
+    def exe_search(self, sql):
+        # 受影响的行数
+        line_cnt = self.cursor.execute(sql)
+        return (line_cnt, self.cursor.fetchall())
+
+    def exe_insert(self, sql, vals):
+        self.cursor.execute(sql,vals)
+        self.db.commit()
+
+    def exe_update(self, sql, vals):
+        self.cursor.execute(sql, vals)
+        self.db.commit()
+
+    def get_count(self, sql):
+        ret_count = 0
+
+        try:
+            line_cnt = self.cursor.execute(sql)
+            if line_cnt >= 0:
+                ret_count = self.cursor.fetchall()[0].popitem()[1]
+        except:
+            pass
+
+        return ret_count
+
+    def get_cursor(self):
+        return self.cursor
+
+db_helper = db_helper_class()
+
+input_url_file= 'my_277_name_url.txt'
 ouput_name_url_file= 'xx_name_url.txt'
-num_row =  2295         #从第ｎ行开始读,这一行还没抓
+num_row =  1         #从第ｎ行开始读,这一行还没抓
 
 def save(fh, contents): 
     fh.write(contents) 
@@ -40,19 +79,45 @@ def send_post(url,fh):
     filename = re.findall('<title>(.*?)</title>', resp.content)  
     print filename[0]+'||'+url+"\n"
     save(fh,filename[0]+'||'+url)
- 
+    e_filename = '_'.join(filename[0].split('_')[:-1])
+    sql = 'update formal_book_info set url = %s where name =%s'
+    vals = (url , e_filename)
+    db_helper.exe_update(sql,vals)
+
+#根据url文件，获取对应的书名，输出url书名文件，并保存到数据库
+# file = open(input_url_file)
+# fh = open(ouput_name_url_file, 'a+') 
+# i=0
+# while 1:
+#     i=i+1
+#     print i
+#     if i < num_row:
+#         url = file.readline()
+#         pass
+#     else: 
+#         time.sleep(0.8)
+#         url = file.readline()
+#         if not url:
+#             break
+#         send_post(url,fh)
+#根据url书名文件，将url书名存到数据库
 file = open(input_url_file)
-fh = open(ouput_name_url_file, 'a+') 
-i=0
 while 1:
-    i=i+1
-    print i
-    if i < num_row:
-        url = file.readline()
-        pass
-    else: 
-        time.sleep(0.8)
-        url = file.readline()
-        if not url:
-            break
-        send_post(url,fh)
+    url = file.readline()
+    if not url:
+        break
+    filename = url.split('||')
+    e_filename = '_'.join(filename[0].split('_')[:-1])
+    print e_filename
+    sql = 'update formal_book_info set url = %s where name =%s'
+    vals = (filename[1] , e_filename)
+    db_helper.exe_update(sql,vals)
+
+
+
+
+
+
+
+
+
