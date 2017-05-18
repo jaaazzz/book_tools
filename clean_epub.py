@@ -77,6 +77,9 @@ def clean_html(filename,rootdir):
         fo.close()
         log(log_name,rootdir+filename,'replace_file')
     elif ((all_the_text.find('www.ireadweek.com')!=-1) and (all_the_text.find('25岁前一定要读的25本书')==-1)):
+            #参考,标签之内和标签之外的广告
+            #all_ps_out = re.findall('<(.*?)>(.*?)</(.*?)>',new_txt,re.S)
+            #all_ps_out = re.findall('</(.*?)>(.*?)<(.*?)>',new_txt,re.S)
             all_ps = re.findall('<p(.*?)>(.*?)</p>',all_the_text,re.S)
             new_txt = all_the_text
             for p in all_ps:
