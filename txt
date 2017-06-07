@@ -1,0 +1,76 @@
+简介：
+本书由“极刻”整理，网站海量书籍不断更新，提供优质的文学/工具/小说类资源。
+若链接失效或查找指定书籍可加小编微信/QQ:1504227550或加群643890191。
+如果本站内的资源侵犯了您的合法权益，请发送邮件至1504227550#qq.com。小编将在看到邮件后的第一时间内删除资源！
+
+简评：
+小编会不定期为大家提供各类优质书单。
+包括：
+豆瓣、当当、知乎主流网站推荐书籍，涵盖历史、文学、励志、军事、青春等各个方面
+各类实用工具书，如考研考证工具书，IT技术书
+种类丰富的网络小说。
+喜欢读书的小伙伴们千万不要错过，如果喜欢我们网站，记得Ctrl+D收藏哦！
+如果有找不到的书籍可以加QQ或微信：1504227550，来找小编要书哦！
+小编整理了海量精美图书，只有你想不到，没有我们找不到！
+
+<div class="article_content" id="article_content" style="">
+    <div class='book_name' style='width:100%;height:50px;'>
+        <div style='width:5px;height:1em;background-color:#4499ee;float:left;margin-top:5px;margin-right:15px'></div>
+        <p>4点起床.最养生和高效的时间管理</p>
+    </div>
+    <hr>
+    <div class="book_info">
+        <div style="float:left;height:200px;width:150px">
+            <img style="height:200px;width:150px" src="/wp-content/uploads/2017/05/db_6828163.jpg"/>
+        </div>
+        <div class="details" style='margin-left:160px;height:200px;width:400px'>
+            <p style='margin-bottom:5px'>作者：【日】中岛孝志 </p>
+            <p style='margin-bottom:5px'>标签：时间管理|个人管理|晨间改变|4点起床|日本|完善自己|励志|职场</p>
+            <p style='margin-bottom:5px'>豆瓣评分： 6.5分</p>
+            <div>
+                <button class='b_download'><a href=''>点击下载</a></button>
+                <button class='b_keyword' onclick='get_keyword()'>获取密码</button>
+                <a id='password'></a>
+                <p style='color:red'>注：如果下载失败，请联系小编，微信或QQ：1504227550</p>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class='intro'>
+        <p>简介：</p>
+ 		<div>本书由“极刻”整理，网站海量书籍不断更新，提供优质的文学/工具/小说类资源。</div>
+        <div>若链接失效或查找指定书籍可加小编微信/QQ:1504227550或加群643890191。</div>
+        <div>如果本站内的资源侵犯了您的合法权益，请发送邮件至1504227550#qq.com。</div>
+        <div>小编将在看到邮件后的第一时间内删除资源！</div>
+    </div>
+    <hr>
+    <div class='abstra'>
+        <p>简评 ：</p>
+        <div>小编会不定期为大家提供各类优质书单以及长期更新各类精美图书。</div>
+		<p>包括：</p>
+		<p style="text-indent:2em">
+		豆瓣、当当、知乎主流网站推荐书籍，涵盖历史、文学、励志、青春等各个方面</p>
+		<p style="text-indent:2em">各类实用工具书，如考研考证工具书，IT技术书</p>
+		<p style="text-indent:2em">种类丰富的网络小说。</p>
+		<div>喜欢读书的小伙伴们千万不要错过，如果喜欢我们网站，记得Ctrl+D收藏哦！</div>
+		<div>如果有找不到的书籍可以加QQ或微信：1504227550，来找小编要书哦！</div>
+		<div>小编整理了海量精美图书，只有你想不到，没有我们找不到！</div>
+    </div>
+    <hr>
+    <div class='menu'>
+    </div>
+</div>
+<script>
+function get_keyword(){
+    document.getElementById("password").innerHTML="";
+}
+</script>
+
+
+
+
+
+
+
+
+
